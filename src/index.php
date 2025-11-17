@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/log_print.php';
 /**
   UYCODEKA
   Copyright (C) MCC (http://www.mcc.com.uy)
@@ -112,9 +113,13 @@ function Auth()
             $r_ok = $paciente["datos"][0];
             $converter = new Encryption;
             if ($r_ok['randomhash'] != '') {
+                logq("randomhash");
                 $encoded = $converter->encode($password . $r_ok['randomhash']);
             } else {
+                logq("no randomhash");
                 $encoded = $converter->encode($password);
+                logq($password);
+                logq($encoded);
             }
             //echo $encoded;
             if ($r_ok['usuario'] != $nombre && $r_ok['contrasenia'] != $encoded) {
@@ -128,6 +133,7 @@ function Auth()
                 $password = "";
                 return false;
             } else {
+                logq("else else else");
                 $UserID = $r_ok['codusuarios'];
                 $UserTra = $r_ok['tratamiento'];
                 $UserTpo = $r_ok['tratamiento'];
@@ -142,6 +148,8 @@ function Auth()
                 
             <script type="text/javascript" src="library/js/jquery-3.3.1.min.js"></script>
             <script type="text/javascript">
+			
+                <?php echo logq("Asignamos el valor al objeto localStorage"); ?>
                 sessionStorage.setItem('usuario', "<?php echo $UserNom; ?>");
                 //Asignamos el valor al objeto localStorage
                 localStorage.setItem('mail', "<?php echo $UserMail; ?>");
