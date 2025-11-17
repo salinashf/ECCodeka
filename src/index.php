@@ -59,7 +59,7 @@ function Validate()
         $password = "";
     }
 
-    $password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);//strip_tags($_POST['password']);
+    $password = strip_tags($_POST['password']);
     if (strlen($password) == 0) {
         $ret = false;
         $password = "";
@@ -83,7 +83,7 @@ function Auth()
     }
 
     $nombre = filter_var($_POST['nombre'], FILTER_SANITIZE_EMAIL);//$_POST['nombre'];
-    $password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);//$_POST['password'];
+    $password = strip_tags($_POST['password']);//$_POST['password'];
     
     //return false;
     $posicion = strpos($nombre, '@');
@@ -209,7 +209,12 @@ die();
     if (isset($_POST['method'])) {
         session_start();
         $converter = new Encryption;
-        $captcha = $converter->encode(filter_var($_POST['captcha'], FILTER_SANITIZE_STRING));
+		$captcha = null;
+
+		if (isset($_POST['captcha']) && is_string($_POST['captcha'])) {
+			$cleanCaptcha = strip_tags($_POST['captcha']);
+			$captcha = $converter->encode($cleanCaptcha);
+		}
 
         if ($captcha == $_SESSION['codigo']) {
   /** Formulario remitido */
@@ -247,7 +252,7 @@ die();
                             $s->data['UserNom'] = $UserNom;
                             $s->data['UserApe'] = $UserApe;
                             $s->data['MenuColor'] = $MenuColor;
-                            $s->data['language'] = filter_var($_POST['lang'], FILTER_SANITIZE_STRING);//$_POST['lang'];
+                            $s->data['language'] = isset($_POST['lang']) ? strip_tags($_POST['lang']) : 'es';//$_POST['lang'];
                             $s->data['paleta'] = 1;
                             $s->data['UserMail'] = $UserMail;
                             $s->data['hora'] = time();
@@ -295,6 +300,7 @@ die();
                 LoginForm($act);
             }
         }else{
+			$nombre = isset($nombre) ? $nombre : "-=-";
             $status_msg = $nombre . _('Captcha no válida');
             LoginForm($act);
         }

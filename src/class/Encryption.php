@@ -18,21 +18,17 @@ class Encryption {
     }
 
     public  function encode($value){ 
-        if(!$value){return false;}
-        $text = $value;
-        $iv_size = @mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
-        $iv = @mcrypt_create_iv($iv_size, MCRYPT_RAND);
-        $crypttext = @mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $this->skey, $text, MCRYPT_MODE_ECB, $iv);
-        return trim($this->safe_b64encode($crypttext)); 
+        if (!$value) return false;
+        $method = 'AES-128-ECB'; // puedes usar AES-256-CBC si ajustas la clave y IV
+        $encrypted = openssl_encrypt($value, $method, $this->skey, OPENSSL_RAW_DATA);
+        return $this->safe_b64encode($encrypted);
     }
 
     public function decode($value){
-        if(!$value){return false;}
-        $crypttext = $this->safe_b64decode($value); 
-        $iv_size = @mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
-        $iv = @mcrypt_create_iv($iv_size, MCRYPT_RAND);
-        $decrypttext = @mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $this->skey, $crypttext, MCRYPT_MODE_ECB, $iv);
-        return trim($decrypttext);
+        if (!$value) return false;
+        $method = 'AES-128-ECB';
+        $decoded = $this->safe_b64decode($value);
+        return openssl_decrypt($decoded, $method, $this->skey, OPENSSL_RAW_DATA);
     }
 }
 ?>
