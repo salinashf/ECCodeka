@@ -1,5 +1,5 @@
 db:
-  name: "freeuycodeka"
-  user: "usuariouycodeka"
-  pass: "contraseniadeusuario"
-  host: "localhost"
+  name: "codekaDB"
+  user: "user_admin"
+  pass: "dbpass"
+  host: "db_codeka"
