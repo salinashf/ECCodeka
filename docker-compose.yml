@@ -1,0 +1,46 @@
+volumes:
+  mysql-data_id:
+    name: ${PROJECT_NAME}-db_data
+networks:
+  network-id:
+    name: ${PROJECT_NAME}-network
+services:
+  web_codeka:
+    build:
+      context: ./docker/php/${PHP_VERSION_CUSTOM}/
+    image: php/codekaq:${PHP_VERSION_CUSTOM}
+    container_name: ${PROJECT_NAME}-php-apache
+    ports:
+      - "${SERVER_PORT_WEB}:80"
+    volumes:
+      - ./src/UYCodeka/:/var/www/html
+    depends_on:
+      - db_codeka
+    networks:
+      - network-id
+
+  db_codeka:
+    image: mysql:8.0
+    container_name: ${PROJECT_NAME}-mysql-db
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    volumes:
+      - mysql-data_id:/var/lib/mysql # Persist database data
+    networks:
+      - network-id
+    ports:
+      - "${SERVER_PORT_MYSQL}:3307"
+  web_phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    environment:
+      PMA_HOST: db_codeka # Link to the database service by its name
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD} # Use the same root password as MySQL
+    ports:
+      - "${SERVER_PORT_PHPMYADMIN}:80" # Map host port 8080 to container port 80 for phpMyAdmin access
+    depends_on:
+      - db_codeka
+    networks:
+      - network-id

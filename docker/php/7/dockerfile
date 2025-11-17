@@ -1,0 +1,60 @@
+FROM php:7.4-apache
+
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
+
+
+RUN apt-get update
+RUN apt-get install --yes --force-yes \
+  cron \
+  g++ \
+  gettext \
+  locales \
+  zip \
+  unzip \
+  libicu-dev \
+  openssl \
+  libc-client-dev \
+  libkrb5-dev \
+  libxml2-dev \
+  libfreetype6-dev \
+  libgd-dev \
+  libmcrypt-dev \
+  bzip2 \
+  libbz2-dev \
+  libtidy-dev \
+  libcurl4-openssl-dev \
+  libz-dev \
+  libmemcached-dev \
+  libxslt-dev \
+  libpng-dev \
+  libjpeg-dev \
+  libfreetype6-dev \
+  sed  \
+  && rm -rf /var/lib/apt/lists/*
+
+# Install the gettext PHP extension
+RUN docker-php-ext-install gettext
+
+RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+  dpkg-reconfigure --frontend=noninteractive locales && \
+  update-locale LANG=en_US.UTF-8
+
+RUN a2enmod rewrite
+
+RUN docker-php-ext-install mysqli
+RUN docker-php-ext-enable mysqli
+
+RUN docker-php-ext-configure gd --with-freetype=/usr --with-jpeg=/usr
+RUN docker-php-ext-install gd pdo pdo_mysql
+
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+
+# RUN mkdir -p /var/www/html/UYCodeka/instalar/myBackups /var/www/html/UYCodeka/copias /var/www/html/UYCodeka/reportes/tmp && \
+#   chown -R www-data:www-data /var/www/html/UYCodeka/instalar/myBackups /var/www/html/UYCodeka/copias /var/www/html/UYCodeka/reportes/tmp && \
+#   chmod -R 775 /var/www/html/UYCodeka/instalar/myBackups /var/www/html/UYCodeka/copias /var/www/html/UYCodeka/reportes/tmp
+
+
+

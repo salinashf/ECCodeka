@@ -1,0 +1,19 @@
+FROM php:8.2-apache
+
+# Instala dependencias necesarias y extensiones
+RUN apt-get update
+RUN apt-get install -y  \
+  libzip-dev  \
+  zip  \
+  unzip  \
+  gettext \
+  libpng-dev \
+  libjpeg-dev \
+  libfreetype6-dev
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+RUN docker-php-ext-install mysqli pdo pdo_mysql zip gettext gd
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
+RUN mkdir -p /var/www/html/UYCodeka/instalar/myBackups /var/www/html/UYCodeka/copias /var/www/html/UYCodeka/reportes/tmp && \
+  chown -R www-data:www-data /var/www/html/UYCodeka/instalar/myBackups /var/www/html/UYCodeka/copias /var/www/html/UYCodeka/reportes/tmp && \
+  chmod -R 775 /var/www/html/UYCodeka/instalar/myBackups /var/www/html/UYCodeka/copias /var/www/html/UYCodeka/reportes/tmp
