@@ -1,8 +1,8 @@
 <?php
 header('X-Frame-Options: SAMEORIGIN' );
 
-$Usuario="usuariouycodeka";
-$Password="contraseniadeusuario";
-$Servidor="localhost";
-$BaseDeDatos="freeuycodeka";
+$Usuario="user_admin";
+$Password="dbpass";
+$Servidor="db_codeka";
+$BaseDeDatos="codekaDB";
 ?>
